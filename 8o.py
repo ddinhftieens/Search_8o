@@ -83,8 +83,14 @@ class BaiToan8o(object):
                 self.nutcon.append(rightt)
         return self.nutcon
 
+def check(x, queue):
+    for i in queue:
+        if x.trangthai == i.trangthai:
+            return False
+    return True
+
 def add(tapnut, queue, list, dich, nguon): #them k neu dung A_DFS
-    tapnut.reverse()
+    # tapnut.reverse()
     nut = iter(tapnut)
     while True:
         try:
@@ -98,7 +104,8 @@ def add(tapnut, queue, list, dich, nguon): #them k neu dung A_DFS
                 action.reverse()
                 print("Buoc: ",action)
                 return queue,True
-            if x.trangthai not in list: #them and x.cost<k-1 neu dung A_DFS
+            if x.trangthai not in list and check(x,queue): # BFS vs DFS
+            # if x.cost < k and check(x,queue):
                 queue.append(x)
         except:
             break
@@ -109,29 +116,37 @@ def DFS(nguon,dich):
     stack = collections.deque([])
     stack.append(nguon)
     OK = False
+    k = 0
     while not OK:
         first = stack.pop()
         print(first.cost)
         list.append(first.trangthai)
+        k = k + 1
         tapcacnutcon = first.Thucthi()
         stack, OK = add(tapcacnutcon, stack, list, dich, nguon)
+    return k
 
 def BFS(nguon, dich):
     list = []
     queue = collections.deque([])
     queue.append(nguon)
     OK = False
+    k = 0
     while not OK:
         frist = queue.popleft()
         print(frist.cost)
+        k = k+1
         list.append(frist.trangthai)
         tapcacnutcon = frist.Thucthi()
         queue,OK = add(tapcacnutcon,queue,list,dich,nguon)
+    return k
 
-def A_DFS(nguon,dich):
-    k = 2
+def IDS(nguon,dich):
+    n = 0
+    k = 1
     OK = False
     while not OK:
+        print(k)
         list = []
         stact = collections.deque([])
         stact.append(nguon)
@@ -139,18 +154,20 @@ def A_DFS(nguon,dich):
             if len(stact)==0:
                 break
             frist = stact.pop()
+            n = n+1
             list.append(frist.trangthai)
             tapcacnutcon = frist.Thucthi()
             stact, OK = add(tapcacnutcon,stact,list,dich,nguon,k)
         k = k + 1
+    return n
 
 def main():
-    data = (6,1,8,4,0,2,7,3,5)
+    data = (1,2,5,3,4,0,6,7,8)
     dich = (0,1,2,3,4,5,6,7,8)
     nguon = BaiToan8o(data,int(math.sqrt(len(data))))
-    DFS(nguon,dich)
-    # BFS(nguon,dich)
-    # A_DFS(nguon,dich)
+    # print("Nodes expanded: ",DFS(nguon,dich))
+    print("Nodes expanded: ",BFS(nguon,dich))
+    # print("Nodes expanded: ",IDS(nguon,dich))
 
 if __name__ == '__main__':
     main()
